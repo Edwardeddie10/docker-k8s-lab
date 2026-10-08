@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.get("/")
 def home():
     return jsonify(
-        message="Hello from Docker and Kubernetes!",
+        message="Hello from Kubernetes Version 2!",
         version=os.getenv("APP_VERSION", "v1"),
         pod=socket.gethostname(),
     )
