@@ -1,0 +1,43 @@
+
+name: Docker Kubernetes CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate Python application
+        run: python -m compileall -q app.py
+
+      - name: Build Docker image
+        run: docker build -t flask-k8s-demo:ci .
+
+      - name: Test container health endpoint
+        run: |
+          docker run -d --name flask-ci -p 5000:5000 flask-k8s-demo:ci
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://localhost:5000/health | grep -q healthy; then
+              echo "Container health check passed"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs flask-ci
+          exit 1

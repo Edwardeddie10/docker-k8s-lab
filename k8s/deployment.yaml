@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,19 +15,27 @@ spec:
     spec:
       containers:
         - name: flask-demo
-          image: flask-k8s-demo:v1
+          image: flask-k8s-demo:v2
           imagePullPolicy: Never
           ports:
             - containerPort: 5000
           env:
             - name: APP_VERSION
-              value: "v1"
+              value: "v2"
           readinessProbe:
             httpGet:
               path: /health
               port: 5000
             initialDelaySeconds: 3
             periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
           resources:
             requests:
               cpu: "100m"
