@@ -301,6 +301,53 @@ kubectl rollout status deployment/flask-demo
 
 > **Important:** Imperative changes such as `kubectl scale`, `kubectl set image`, and `kubectl set env` modify the live Deployment, not your YAML files. Before treating manifests as your source of truth, update `k8s/deployment.yaml` to the final desired replica count, image tag, and environment values. Otherwise, a later `kubectl apply` may revert live settings.
 
+
+## Platform Engineering Enhancements
+
+This project extends the original Docker and Minikube lab with container security, application reliability, and automated continuous integration practices.
+
+### Application Runtime
+
+- Upgraded the Flask application to use Gunicorn 23.0.0.
+- Built and tested the optimized Docker image (`flask-k8s-demo:v2`).
+- Verified the application health endpoint.
+
+### Kubernetes Reliability
+
+- Deployed two application replicas.
+- Configured readiness and liveness probes.
+- Defined CPU and memory requests and limits.
+- Successfully performed a rolling update from v1 to v2.
+- Verified both application pods were healthy.
+
+### Container Security
+
+- Runs the application as a non-root user (UID 1000).
+- Disables privilege escalation.
+- Drops all Linux capabilities.
+- Verified the Kubernetes securityContext configuration.
+
+### GitHub Actions CI
+
+The automated CI pipeline runs on pushes and pull requests to the master branch.
+
+It performs:
+
+1. Python syntax validation.
+2. Kubernetes manifest validation using Kubeconform.
+3. Docker image build.
+4. Container health endpoint testing.
+
+The GitHub Actions pipeline has been successfully executed and verified.
+
+### Deployment Scope
+
+This project uses a local Minikube Kubernetes cluster with the Docker driver.
+
+GitHub Actions validates and builds the application but does not automatically deploy it to Kubernetes.
+
+
+
 ## Troubleshooting quick reference
 
 | Symptom | What to check |
