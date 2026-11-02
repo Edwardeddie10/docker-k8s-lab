@@ -26,6 +26,12 @@ jobs:
       - name: Validate Python application
         run: python -m compileall -q app.py
 
+      - name: Validate Kubernetes manifests
+        run: |
+          curl -fsSL -o kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz kubeconform
+          ./kubeconform -strict -summary k8s/deployment.yaml k8s/service.yaml
+
       - name: Build Docker image
         run: docker build -t flask-k8s-demo:ci .
 
